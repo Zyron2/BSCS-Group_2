@@ -26,6 +26,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user' // <-- ensure role is set
         ]);
 
         Auth::login($user);
@@ -43,7 +44,11 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect('/home');
+            $request->session()->regenerate();
+            if (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('dashboard');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);

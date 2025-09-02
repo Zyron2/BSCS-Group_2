@@ -23,18 +23,20 @@
                         </div>
                     @endif
 
-                    <form action="{{ url('/login') }}" method="POST">
+                    <form class="user" action="{{ url('/login') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <input type="email" name="email" class="form-control form-control-user" placeholder="Email" required>
+                            <input type="email" name="email" class="form-control form-control-user" placeholder="Email Address" required>
                         </div>
                         <div class="form-group">
                             <input type="password" name="password" class="form-control form-control-user" placeholder="Password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                            Login
+                        </button>
+                        <hr>
                     </form>
 
-                    <hr>
                     <div class="text-center">
                         <a class="small" href="{{ url('/register') }}">Don't have an account? Register!</a>
                     </div>
