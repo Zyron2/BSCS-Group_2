@@ -19,6 +19,10 @@
             <input type="number" name="capacity" class="border rounded px-2 py-1 w-full" required>
         </div>
         <div class="mb-2">
+            <label>About</label>
+            <textarea name="about" class="border rounded px-2 py-1 w-full" rows="3" placeholder="Room description..."></textarea>
+        </div>
+        <div class="mb-2">
             <label>Equipment (comma separated)</label>
             <input type="text" name="equipment" class="border rounded px-2 py-1 w-full" placeholder="e.g. Projector, Whiteboard">
         </div>
@@ -30,6 +34,7 @@
             <tr>
                 <th>Name</th>
                 <th>Capacity</th>
+                <th>About</th>
                 <th>Equipment</th>
                 <th>Actions</th>
             </tr>
@@ -39,6 +44,7 @@
                 <tr>
                     <td>{{ $room->name }}</td>
                     <td>{{ $room->capacity }}</td>
+                    <td>{{ Str::limit($room->about, 50) }}</td>
                     <td>
                         @if(is_array($room->equipment))
                             {{ implode(', ', $room->equipment) }}

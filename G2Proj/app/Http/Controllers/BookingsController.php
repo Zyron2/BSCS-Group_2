@@ -45,9 +45,18 @@ class BookingsController extends Controller
             'attendees' => 'required|integer'
         ]);
 
-        Booking::create($request->all());
+        Booking::create(array_merge($request->all(), [
+            'user_id' => auth()->id(),
+            'status' => 'pending'
+        ]));
 
         return redirect()->route('bookings.index')->with('success', 'Booking created!');
+    }
+
+    public function rooms()
+    {
+        $rooms = Room::all();
+        return view('rooms.index', compact('rooms'));
     }
 
     // Add edit, update, destroy methods as needed

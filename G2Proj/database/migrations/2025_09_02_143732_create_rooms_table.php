@@ -11,12 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rooms', function (Blueprint $table) {
+        Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('capacity');
-            $table->json('equipment')->nullable(); // optional, for storing equipment as JSON
+            $table->unsignedBigInteger('room_id');
+            $table->string('title');
+            $table->date('date');
+            $table->string('start_time');
+            $table->string('end_time');
+            $table->string('organizer');
+            $table->integer('attendees');
+            $table->string('status')->default('pending');
             $table->timestamps();
+
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
         });
     }
 
@@ -25,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rooms');
+        Schema::dropIfExists('bookings');
     }
 };

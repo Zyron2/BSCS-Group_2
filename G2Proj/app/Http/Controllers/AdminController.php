@@ -26,6 +26,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'capacity' => 'required|integer',
+            'about' => 'nullable|string',
             'equipment' => 'nullable|string'
         ]);
         $equipment = $request->equipment
@@ -34,6 +35,7 @@ class AdminController extends Controller
         Room::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
+            'about' => $request->about,
             'equipment' => json_encode($equipment)
         ]);
         return redirect()->route('admin.rooms')->with('success', 'Room added!');
@@ -49,6 +51,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'capacity' => 'required|integer',
+            'about' => 'nullable|string',
             'equipment' => 'nullable|string'
         ]);
         $equipment = $request->equipment
@@ -57,6 +60,7 @@ class AdminController extends Controller
         $room->update([
             'name' => $request->name,
             'capacity' => $request->capacity,
+            'about' => $request->about,
             'equipment' => json_encode($equipment)
         ]);
         return redirect()->route('admin.rooms')->with('success', 'Room updated!');
