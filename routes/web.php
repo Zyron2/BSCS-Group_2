@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController; // <-- added this
 use Illuminate\Support\Facades\Auth;
 
 // Redirect root to register for new users, or dashboard if authenticated
@@ -35,6 +36,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bookings', [BookingsController::class, 'index'])->name('bookings.index');
     Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
     Route::get('/rooms', [BookingsController::class, 'rooms'])->name('rooms.index');
+
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Admin dashboard routes (for admin users only)
@@ -50,5 +55,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/bookings', [AdminController::class, 'storeBooking'])->name('admin.bookings.store');
     Route::post('/admin/bookings/{booking}/status', [AdminController::class, 'updateBookingStatus'])->name('admin.bookings.status');
 });
+
 
 // Routing is already correct for admin and user dashboards

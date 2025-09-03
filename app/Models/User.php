@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'profile',
     ];
 
     /**
@@ -45,5 +46,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Accessor for profile picture URL.
+     * Returns uploaded profile if exists, otherwise default avatar.
+     */
+    public function getProfileUrlAttribute(): string
+    {
+        if (!empty($this->profile) && Storage::exists($this->profile)) {
+            return Storage::url($this->profile);
+        }
+
+        return asset('default-avatar.png'); // dapat nasa public/default-avatar.png
     }
 }

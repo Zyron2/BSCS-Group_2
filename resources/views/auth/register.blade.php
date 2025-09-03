@@ -31,7 +31,42 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            
+                            <!-- LEFT SIDE WITH LOGO -->
+                            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-white">
+                                <div class="text-center">
+                                    <svg width="120" height="120" viewBox="0 0 64 64" aria-labelledby="campuscoordLogo" role="img">
+                                        <title id="campuscoordLogo">CampusCoord logo</title>
+                                        <defs>
+                                            <linearGradient id="cc-grad" x1="0" y1="0" x2="1" y2="1">
+                                                <stop offset="0%"  stop-color="#2dd4bf"/>
+                                                <stop offset="100%" stop-color="#4f46e5"/>
+                                            </linearGradient>
+                                            <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                                                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".18"/>
+                                            </filter>
+                                        </defs>
+
+                                        <!-- Pin base -->
+                                        <path d="M32 6c10.5 0 19 8.2 19 18.3 0 11.1-9.9 19.5-16 28.9-1 1.6-2.9 1.6-3.9 0C24.9 43.9 13 35.3 13 24.3 13 14.2 21.5 6 32 6z"
+                                            fill="url(#cc-grad)" filter="url(#soft)"/>
+
+                                        <!-- Inner “C” rings -->
+                                        <circle cx="32" cy="24" r="11.5" fill="none" stroke="white" stroke-width="4" opacity=".9"/>
+                                        <path d="M39 24a7 7 0 1 1-7-7" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" opacity=".95"/>
+
+                                        <!-- Campus dot -->
+                                        <circle cx="32" cy="24" r="3.2" fill="white" opacity=".95"/>
+                                    </svg>
+
+                                    <h2 class="mt-3 font-weight-bold">
+                                        <span style="background: linear-gradient(135deg,#2dd4bf,#4f46e5);
+                                        -webkit-background-clip: text; color: transparent;">Campus</span>Coord
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT SIDE (REGISTRATION FORM) -->
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
