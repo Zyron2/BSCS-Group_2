@@ -22,7 +22,7 @@
                         <a href="{{ route('rooms.index') }}" class="text-blue-600 hover:text-blue-800">View Rooms</a>
                         <a href="{{ route('bookings.index') }}" class="text-blue-600 hover:text-blue-800">My Bookings</a>
                     @endif
-                    
+                
                     <!-- Profile Dropdown -->
                     <div class="relative">
                         <button type="button"
@@ -66,6 +66,9 @@
         @yield('content')
     </main>
 
+    //footer 
+    @include('layouts.footer')
+    
     <!-- Small JS to close dropdown when clicking outside -->
     <script>
         window.addEventListener('click', function(e) {

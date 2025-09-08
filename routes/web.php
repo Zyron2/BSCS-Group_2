@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProfileController; // <-- added this
+use App\Http\Controllers\ProfileController; 
 use Illuminate\Support\Facades\Auth;
 
 // Redirect root to register for new users, or dashboard if authenticated
@@ -56,5 +56,13 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/bookings/{booking}/status', [AdminController::class, 'updateBookingStatus'])->name('admin.bookings.status');
 });
 
-
 // Routing is already correct for admin and user dashboards
+
+// Public information pages
+Route::get('/aboutus', function () {
+    return view('aboutus');
+})->name('aboutus');
+
+Route::get('/contactus', function () {
+    return view('contactus');
+})->name('contactus');
