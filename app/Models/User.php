@@ -9,14 +9,8 @@ use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -25,21 +19,11 @@ class User extends Authenticatable
         'profile',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -50,14 +34,14 @@ class User extends Authenticatable
 
     /**
      * Accessor for profile picture URL.
-     * Returns uploaded profile if exists, otherwise default avatar.
      */
     public function getProfileUrlAttribute(): string
     {
-        if (!empty($this->profile) && Storage::exists($this->profile)) {
-            return Storage::url($this->profile);
+        if (!empty($this->profile) && str_starts_with($this->profile, '/storage/')) {
+            return asset($this->profile);
         }
 
-        return asset('default-avatar.png'); // dapat nasa public/default-avatar.png
+        // fallback to default avatar
+        return asset('default-avatar.png'); // ilagay mo ito sa public/default-avatar.png
     }
 }
