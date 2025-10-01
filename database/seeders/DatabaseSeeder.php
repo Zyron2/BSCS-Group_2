@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Default users
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -32,5 +33,8 @@ class DatabaseSeeder extends Seeder
                 'role' => 'user'
             ]
         );
+
+        // ✅ Call the RoomSeeder
+        $this->call(RoomSeeder::class);
     }
 }

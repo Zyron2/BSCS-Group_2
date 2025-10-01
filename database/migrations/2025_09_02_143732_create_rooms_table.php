@@ -6,23 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('rooms', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+
+public function up(): void
+{
+    Schema::create('rooms', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
             $table->integer('capacity');
             $table->json('equipment')->nullable(); // optional, for storing equipment as JSON
-            $table->timestamps();
-        });
-    }
+        $table->timestamps();
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('rooms');

@@ -66,7 +66,7 @@
         @yield('content')
     </main>
 
-    //footer 
+
     @include('layouts.footer')
     
     <!-- Small JS to close dropdown when clicking outside -->
