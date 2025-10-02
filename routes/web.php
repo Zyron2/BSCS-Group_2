@@ -35,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [BookingsController::class, 'index'])->name('dashboard');
     Route::get('/bookings', [BookingsController::class, 'index'])->name('bookings.index');
     Route::post('/bookings', [BookingsController::class, 'store'])->name('bookings.store');
+    Route::put('/bookings/{booking}', [BookingsController::class, 'update'])->name('bookings.update');
+    Route::delete('/bookings/{booking}', [BookingsController::class, 'destroy'])->name('bookings.destroy');
     Route::get('/rooms', [BookingsController::class, 'rooms'])->name('rooms.index');
 
     // Profile routes

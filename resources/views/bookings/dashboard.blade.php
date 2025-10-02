@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -8,9 +9,9 @@
                 {{ session('success') }}
             </div>
         @endif
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 min-h-screen">
             <!-- Sidebar -->
-            <div class="lg:col-span-1">
+            <div class="lg:col-span-1 h-full flex flex-col">
                 <!-- Date Picker -->
                 <div class="bg-white rounded-lg shadow p-6 mb-6">
                     <h3 class="text-lg font-semibold mb-4">Select Date</h3>
@@ -109,9 +110,87 @@
                                                 <p class="text-sm text-gray-600">Organized by {{ $booking->organizer }}</p>
                                             </div>
                                             <div class="flex space-x-2">
-                                                <button class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
-                                                <button class="text-red-600 hover:text-red-800 text-sm">Cancel</button>
+                                                <!-- Edit Button triggers modal -->
+                                                <button class="text-blue-600 hover:text-blue-800 text-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editBookingModal{{ $booking->id }}">
+                                                    Edit
+                                                </button>
+                                                <!-- Cancel Button triggers modal -->
+                                                <button class="text-red-600 hover:text-red-800 text-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#cancelBookingModal{{ $booking->id }}">
+                                                    Cancel
+                                                </button>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Booking Modal (hidden until Edit is clicked) -->
+                                    <div id="editBookingModal{{ $booking->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editBookingModalLabel{{ $booking->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <form method="POST" action="{{ route('bookings.update', $booking->id) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-content p-4">
+                                                    <h3 class="text-lg font-semibold mb-4">Edit Booking</h3>
+                                                    <div class="mb-2">
+                                                        <label>Room</label>
+                                                        <select name="room_id" class="w-full border rounded px-2 py-1" required>
+                                                            @foreach($rooms as $room)
+                                                                <option value="{{ $room->id }}" {{ $booking->room_id == $room->id ? 'selected' : '' }}>
+                                                                    {{ $room->name }} (Capacity: {{ $room->capacity }})
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Event Title</label>
+                                                        <input type="text" name="title" class="w-full border rounded px-2 py-1" value="{{ $booking->title }}" required />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Date</label>
+                                                        <input type="date" name="date" class="w-full border rounded px-2 py-1" value="{{ $booking->date }}" required />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Start Time</label>
+                                                        <input type="time" name="start_time" class="w-full border rounded px-2 py-1" value="{{ $booking->start_time }}" required />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>End Time</label>
+                                                        <input type="time" name="end_time" class="w-full border rounded px-2 py-1" value="{{ $booking->end_time }}" required />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Organizer</label>
+                                                        <input type="text" name="organizer" class="w-full border rounded px-2 py-1" value="{{ $booking->organizer }}" required />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Number of Attendees</label>
+                                                        <input type="number" name="attendees" class="w-full border rounded px-2 py-1" value="{{ $booking->attendees }}" required />
+                                                    </div>
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="button" class="px-4 py-2 text-gray-600" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save Changes</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- Cancel Booking Modal (same logic) -->
+                                    <div id="cancelBookingModal{{ $booking->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cancelBookingModalLabel{{ $booking->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <form method="POST" action="{{ route('bookings.destroy', $booking->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <div class="modal-content p-4">
+                                                    <h3 class="text-lg font-semibold mb-4">Cancel Booking</h3>
+                                                    <p>Are you sure you want to cancel <strong>{{ $booking->title }}</strong>?</p>
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="button" class="px-4 py-2 text-gray-600" data-bs-dismiss="modal">No</button>
+                                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">Yes, Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach
@@ -227,4 +306,35 @@
 </div>
 <!-- Bootstrap JS for modal functionality -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Close modal after form submit for Edit Booking
+    document.querySelectorAll('form[action*="bookings.update"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            setTimeout(() => {
+                const modalId = '#editBookingModal' + this.action.split('/').pop();
+                const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(modalId));
+                modal.hide();
+            }, 500);
+        });
+    });
+
+    // Close modal after form submit for Cancel Booking
+    document.querySelectorAll('form[action*="bookings.destroy"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            setTimeout(() => {
+                const modalId = '#cancelBookingModal' + this.action.split('/').pop();
+                const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(modalId));
+                modal.hide();
+            }, 500);
+        });
+    });
+
+    // Close modal on Cancel/No button click
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = bootstrap.Modal.getOrCreateInstance(this.closest('.modal'));
+            modal.hide();
+        });
+    });
+</script>
 @endsection

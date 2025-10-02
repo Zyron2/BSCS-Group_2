@@ -53,11 +53,38 @@ class BookingsController extends Controller
         return redirect()->route('bookings.index')->with('success', 'Booking created!');
     }
 
+    public function update(Request $request, Booking $booking)
+    {
+        $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'title' => 'required|string|max:255',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'organizer' => 'required|string|max:255',
+            'attendees' => 'required|integer|min:1',
+        ]);
+
+        $booking->update($request->only([
+            'room_id', 'title', 'date', 'start_time', 'end_time', 'organizer', 'attendees'
+        ]));
+
+        return redirect()->route('bookings.index', ['date' => $booking->date])
+            ->with('success', 'Booking updated successfully.');
+    }
+
+    public function destroy(Booking $booking)
+    {
+        $booking->status = 'cancelled';
+         $booking->save();
+
+        return redirect()->route('bookings.index', ['date' => $booking->date])
+            ->with('success', 'Booking cancelled successfully.');
+    }
+
     public function rooms()
     {
         $rooms = Room::all();
         return view('rooms.index', compact('rooms'));
     }
-
-    // Add edit, update, destroy methods as needed
 }
