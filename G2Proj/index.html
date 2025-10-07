@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Real-time Notifications Demo</title>
+  <style>
+    .notifications-panel {
+      max-width: 320px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-family: Arial, sans-serif;
+    }
+    .notifications-panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.2em;
+    }
+    .notifications-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .notification-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .notification-item:last-child {
+      margin-bottom: 0;
+    }
+    .notification-icon {
+      flex-shrink: 0;
+      margin-right: 8px;
+      font-size: 1.2em;
+    }
+    .notification-content {
+      flex-grow: 1;
+    }
+    .notification-title {
+      margin: 0;
+      font-weight: 500;
+    }
+    .notification-time {
+      color: #666;
+      font-size: 0.85em;
+      margin-top: 2px;
+    }
+    .unread {
+      background-color: #eef8ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="notifications-panel">
+    <h3>Recent Notifications</h3>
+    <ul class="notifications-list" id="notificationsList">
+      <!-- items will appear here -->
+    </ul>
+  </div>
+<div id="notification-bell" style="cursor:pointer; position:relative;">
+  🔔
+  <span id="notification-count" style="color:red; font-weight:bold; position:absolute; top:0; right:0; font-size:0.8em;"></span>
+</div>
+
+<!-- Notification Panel (hidden by default) -->
+<div id="notifications-panel" class="notifications-panel" style="display:none; position:absolute; right:0; top:40px; z-index:1000;">
+  <h3>Notifications</h3>
+  <ul id="notifications-list" class="notifications-list"></ul>
+</div>
+
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    const SERVER = "http://localhost:3000";
+    const userId = 1;
+
+    const socket = io(SERVER);
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("join", userId);
+    });
+
+    socket.on("new_notification", (n) => {
+      console.log("New notification:", n);
+      addNotificationToUI(n, true);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch(`${SERVER}/api/notifications/${userId}`)
+        .then(r => r.json())
+        .then(list => {
+          list.forEach(n => {
+            addNotificationToUI(n, false);
+          });
+        })
+        .catch(err => console.error("Fetch notifications failed:", err));
+    });
+
+    function addNotificationToUI(n, prepend = false) {
+      const ul = document.getElementById("notificationsList");
+      if (!ul) {
+        console.error("No container #notificationsList");
+        return;
+      }
+      const li = document.createElement("li");
+      li.classList.add("notification-item");
+      if (!n.is_read) {
+        li.classList.add("unread");
+      }
+
+      const iconDiv = document.createElement("div");
+      iconDiv.classList.add("notification-icon");
+      let icon = "ℹ️";
+      if (n.type === "moved") icon = "⚠️";
+      else if (n.type === "cancelled") icon = "❌";
+      else if (n.type === "new_request") icon = "✅";
+      iconDiv.textContent = icon;
+
+      const contentDiv = document.createElement("div");
+      contentDiv.classList.add("notification-content");
+
+      const titleP = document.createElement("p");
+      titleP.classList.add("notification-title");
+      titleP.textContent = n.title;
+
+      const timeP = document.createElement("p");
+      timeP.classList.add("notification-time");
+      timeP.textContent = n.timeAgo !== undefined ? n.timeAgo : "just now";
+
+      contentDiv.appendChild(titleP);
+      contentDiv.appendChild(timeP);
+
+      li.appendChild(iconDiv);
+      li.appendChild(contentDiv);
+
+      if (prepend && ul.firstChild) {
+        ul.insertBefore(li, ul.firstChild);
+      } else {
+        ul.appendChild(li);
+      }
+    }
+  </script>
+</body>
+</html>
