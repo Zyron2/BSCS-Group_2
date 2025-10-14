@@ -44,4 +44,9 @@ class User extends Authenticatable
         // fallback to default avatar
         return asset('default-avatar.png'); // ilagay mo ito sa public/default-avatar.png
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

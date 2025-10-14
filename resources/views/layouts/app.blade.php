@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Room Booking System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Add other CSS or meta tags as needed -->
@@ -100,8 +101,8 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #6366f1);
             border-radius: 50%;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #6366f1);
             z-index: -1;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -280,13 +281,34 @@
                     <!-- Profile Section -->
                     <div class="flex items-center space-x-4">
                         <!-- Notifications Bell -->
-                        <button class="relative p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all-smooth">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zm-5-1h5a2 2 0 002-2V5a2 2 0 00-2-2h-5"/>
-                            </svg>
-                            <!-- Notification Badge -->
-                            <span class="notification-pulse absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                        </button>
+                        <div class="relative">
+                            <button onclick="toggleNotifications()" class="relative p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all-smooth">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3-3V9a6 6 0 10-12 0v5l-3 3h5a6 6 0 1012 0z"/>
+                                </svg>
+                                <!-- Notification Badge -->
+                                <span id="notificationBadge" class="notification-pulse absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                            </button>
+
+                            <!-- Notifications Dropdown -->
+                            <div id="notificationsDropdown" class="profile-dropdown absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden" style="display: none;">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-white font-bold text-lg">Notifications</h3>
+                                        <button onclick="markAllAsRead()" class="text-white hover:text-blue-100 text-sm">Mark all read</button>
+                                    </div>
+                                </div>
+                                <div id="notificationsList" class="max-h-96 overflow-y-auto">
+                                    <div class="p-6 text-center text-gray-500">
+                                        <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3-3V9a6 6 0 10-12 0v5l-3 3h5a6 6 0 1012 0z"/>
+                                        </svg>
+                                        <p>No booking notifications</p>
+                                        <p class="text-xs mt-1">You'll see booking updates here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Profile Dropdown -->
                         <div class="relative">
@@ -484,6 +506,175 @@
             mobileMenu.classList.toggle('mobile-menu-slide');
             mobileMenu.classList.toggle('show');
         }
+
+        // Notifications functionality
+        let notificationsVisible = false;
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            
+            if (notificationsVisible) {
+                dropdown.style.display = 'none';
+                notificationsVisible = false;
+            } else {
+                dropdown.style.display = 'block';
+                notificationsVisible = true;
+                loadNotifications();
+            }
+        }
+
+        function loadNotifications() {
+            fetch('/notifications')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(notifications => {
+                    const list = document.getElementById('notificationsList');
+                    
+                    if (notifications.length === 0) {
+                        list.innerHTML = `
+                            <div class="p-6 text-center text-gray-500">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p>No booking notifications</p>
+                                <p class="text-xs mt-1">You'll see booking updates here</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    list.innerHTML = notifications.map(notification => {
+                        let iconColor = 'bg-blue-100 text-blue-600';
+                        let icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>`;
+                        
+                        if (notification.type === 'booking') {
+                            if (notification.title.includes('Approved')) {
+                                iconColor = 'bg-green-100 text-green-600';
+                                icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`;
+                            } else if (notification.title.includes('Reminder')) {
+                                iconColor = 'bg-yellow-100 text-yellow-600';
+                                icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+                            }
+                        }
+
+                        return `
+                            <div class="border-b border-gray-100 p-4 hover:bg-gray-50 cursor-pointer ${!notification.read_at ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}" onclick="markAsRead(${notification.id})">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 ${iconColor} rounded-full flex items-center justify-center">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                ${icon}
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-medium text-gray-900">${notification.title}</p>
+                                            ${!notification.read_at ? '<div class="w-2 h-2 bg-blue-500 rounded-full"></div>' : ''}
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-1">${notification.message}</p>
+                                        <p class="text-xs text-gray-400 mt-1">${formatDate(notification.created_at)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    const list = document.getElementById('notificationsList');
+                    list.innerHTML = `
+                        <div class="p-6 text-center text-gray-500">
+                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                            <p>Error loading notifications</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function markAsRead(notificationId) {
+            fetch(`/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                updateNotificationCount();
+                loadNotifications();
+            });
+        }
+
+        function markAllAsRead() {
+            fetch('/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                updateNotificationCount();
+                loadNotifications();
+            });
+        }
+
+        function updateNotificationCount() {
+            fetch('/notifications/count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notificationBadge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating notification count:', error);
+                });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        // Load notification count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotificationCount();
+            
+            // Update count every 30 seconds
+            setInterval(updateNotificationCount, 30000);
+        });
+
+        // Close notifications dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationsDropdown');
+            const button = dropdown?.previousElementSibling;
+            
+            if (dropdown && !dropdown.contains(e.target) && !button?.contains(e.target)) {
+                if (notificationsVisible) {
+                    dropdown.style.display = 'none';
+                    notificationsVisible = false;
+                }
+            }
+        });
 
         // Close dropdown when clicking outside
         window.addEventListener('click', function(e) {
