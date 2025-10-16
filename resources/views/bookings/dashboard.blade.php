@@ -1,340 +1,233 @@
-
 @extends('layouts.app')
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p class="text-gray-600 mt-2">Book rooms and manage your reservations.</p>
+        </div>
+
+        <!-- Success/Error Messages -->
         @if(session('success'))
-            <div class="mb-4 alert alert-success text-green-700 bg-green-100 border border-green-300 rounded px-4 py-2">
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
                 {{ session('success') }}
             </div>
         @endif
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 min-h-screen">
-            <!-- Sidebar -->
-            <div class="lg:col-span-1 h-full flex flex-col">
-                <!-- Date Picker -->
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Select Date</h3>
-                    <form method="GET" action="{{ route('bookings.index') }}">
-                        <input type="date" name="date" value="{{ $date }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4" />
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Filter by Date</button>
-                    </form>
-                </div>
 
-                <!-- Filters -->
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Filters</h3>
-                    <form method="GET" action="{{ route('bookings.index') }}">
-                        <input type="hidden" name="date" value="{{ $date }}">
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Search bookings..." class="w-full border border-gray-300 rounded-lg px-3 py-2" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Room</label>
-                            <select name="room_id" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-                                <option value="">All Rooms</option>
+        @if(session('error'))
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Booking Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Book a Room</h2>
+                    
+                    <form method="POST" action="{{ route('bookings.store') }}" class="space-y-4">
+                        @csrf
+                        
+                        <!-- Room Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Room</label>
+                            <select name="room_id" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Choose a room...</option>
                                 @foreach($rooms as $room)
-                                    <option value="{{ $room->id }}" {{ $roomId == $room->id ? 'selected' : '' }}>{{ $room->name }}</option>
+                                    <option value="{{ $room->id }}" {{ (isset($selectedRoomId) && $selectedRoomId == $room->id) ? 'selected' : '' }}>
+                                        {{ $room->name }} (Capacity: {{ $room->capacity }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Apply Filters</button>
+
+                        <!-- Event Title -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
+                            <input type="text" name="title" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Meeting, Conference, etc." required>
+                        </div>
+
+                        <!-- Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                            <input type="date" name="date" value="{{ $date ?? date('Y-m-d') }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+
+                        <!-- Time -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
+                                <input type="time" name="start_time" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
+                                <input type="time" name="end_time" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                        </div>
+
+                        <!-- Organizer -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Organizer</label>
+                            <input type="text" name="organizer" value="{{ auth()->user()->name }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+
+                        <!-- Attendees -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Number of Attendees</label>
+                            <input type="number" name="attendees" min="1" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Expected attendees" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-200 font-medium shadow-md hover:shadow-lg">
+                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Book Room
+                        </button>
                     </form>
                 </div>
 
-                <!-- Notifications (static for now) -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold mb-4">Recent Notifications</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start space-x-3">
-                            <span class="text-yellow-500">&#9888;</span>
-                            <div>
-                                <p class="text-sm text-gray-800">Conference Room A booking moved to 10:00 AM</p>
-                                <p class="text-xs text-gray-500">5 min ago</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <span class="text-red-500">&#10060;</span>
-                            <div>
-                                <p class="text-sm text-gray-800">Lab Room D booking cancelled for tomorrow</p>
-                                <p class="text-xs text-gray-500">1 hour ago</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <span class="text-green-500">&#10003;</span>
-                            <div>
-                                <p class="text-sm text-gray-800">New booking request for Seminar Room E</p>
-                                <p class="text-xs text-gray-500">2 hours ago</p>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Quick Actions -->
+                <div class="mt-6 space-y-3">
+                    <a href="{{ route('rooms.index') }}" class="w-full bg-gray-600 text-white text-center py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200 font-medium shadow-md block">
+                        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Browse Rooms
+                    </a>
+                    
+                    <a href="{{ route('bookings.index') }}" class="w-full bg-green-600 text-white text-center py-2 px-4 rounded-md hover:bg-green-700 transition duration-200 font-medium shadow-md block">
+                        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        My Bookings
+                    </a>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="lg:col-span-3">
-                <div class="bg-white rounded-lg shadow mb-8">
-                    <div class="p-6 border-b flex justify-between items-center">
-                        <h2 class="text-xl font-semibold">Schedule for {{ $date }}</h2>
-                        <!-- Book Room Button triggers modal -->
-                        <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center"
-                            data-bs-toggle="modal" data-bs-target="#bookingModal">
-                            <span class="mr-2">+</span> Book Room
-                        </button>
-                    </div>
-                    <div class="p-6">
-                        @if($bookings->isEmpty())
-                            <div class="text-center py-12">
-                                <span class="text-gray-400 text-4xl">&#128197;</span>
-                                <p class="text-gray-500 mt-4">No bookings found for this date</p>
+            <!-- Today's Schedule -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-gray-900">Today's Schedule</h2>
+                            <div class="flex items-center space-x-4">
+                                <!-- Date Filter -->
+                                <form method="GET" class="flex items-center space-x-2">
+                                    <input type="date" name="date" value="{{ $date }}" class="border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="this.form.submit()">
+                                    @if($search)
+                                        <input type="hidden" name="search" value="{{ $search }}">
+                                    @endif
+                                    @if($roomId)
+                                        <input type="hidden" name="room_id" value="{{ $roomId }}">
+                                    @endif
+                                </form>
+                                
+                                <!-- Room Filter -->
+                                <form method="GET" class="flex items-center">
+                                    <select name="room_id" class="border border-gray-300 rounded-md px-3 py-1 text-sm" onchange="this.form.submit()">
+                                        <option value="">All Rooms</option>
+                                        @foreach($rooms as $room)
+                                            <option value="{{ $room->id }}" {{ $roomId == $room->id ? 'selected' : '' }}>{{ $room->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if($date)
+                                        <input type="hidden" name="date" value="{{ $date }}">
+                                    @endif
+                                    @if($search)
+                                        <input type="hidden" name="search" value="{{ $search }}">
+                                    @endif
+                                </form>
                             </div>
-                        @else
-                            <div class="space-y-4">
-                                @foreach($bookings as $booking)
-                                    <div class="border border-gray-200 rounded-lg p-4 hover:border-gray-300">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <div class="flex items-center space-x-2 mb-2">
-                                                    <h3 class="text-lg font-semibold">{{ $booking->title }}</h3>
-                                                    <span class="px-2 py-1 rounded-full text-xs
-                                                        {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-700' : ($booking->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                                                        {{ $booking->status }}
-                                                    </span>
-                                                </div>
-                                                <div class="flex items-center space-x-4 text-sm text-gray-600 mb-2">
-                                                    <span>&#128337; {{ $booking->start_time }} - {{ $booking->end_time }}</span>
-                                                    <span>&#128205; {{ $booking->room->name }}</span>
-                                                    <span>&#128101; {{ $booking->attendees }} attendees</span>
-                                                </div>
-                                                <p class="text-sm text-gray-600">Organized by {{ $booking->organizer }}</p>
-                                            </div>
-                                            <div class="flex space-x-2">
-                                                <!-- Edit Button triggers modal -->
-                                                <button class="text-blue-600 hover:text-blue-800 text-sm"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#editBookingModal{{ $booking->id }}">
-                                                    Edit
-                                                </button>
-                                                <!-- Cancel Button triggers modal -->
-                                                <button class="text-red-600 hover:text-red-800 text-sm"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#cancelBookingModal{{ $booking->id }}">
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Edit Booking Modal (hidden until Edit is clicked) -->
-                                    <div id="editBookingModal{{ $booking->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editBookingModalLabel{{ $booking->id }}" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <form method="POST" action="{{ route('bookings.update', $booking->id) }}">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-content p-4">
-                                                    <h3 class="text-lg font-semibold mb-4">Edit Booking</h3>
-                                                    <div class="mb-2">
-                                                        <label>Room</label>
-                                                        <select name="room_id" class="w-full border rounded px-2 py-1" required>
-                                                            @foreach($rooms as $room)
-                                                                <option value="{{ $room->id }}" {{ $booking->room_id == $room->id ? 'selected' : '' }}>
-                                                                    {{ $room->name }} (Capacity: {{ $room->capacity }})
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Event Title</label>
-                                                        <input type="text" name="title" class="w-full border rounded px-2 py-1" value="{{ $booking->title }}" required />
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Date</label>
-                                                        <input type="date" name="date" class="w-full border rounded px-2 py-1" value="{{ $booking->date }}" required />
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Start Time</label>
-                                                        <input type="time" name="start_time" class="w-full border rounded px-2 py-1" value="{{ $booking->start_time }}" required />
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>End Time</label>
-                                                        <input type="time" name="end_time" class="w-full border rounded px-2 py-1" value="{{ $booking->end_time }}" required />
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Organizer</label>
-                                                        <input type="text" name="organizer" class="w-full border rounded px-2 py-1" value="{{ $booking->organizer }}" required />
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Number of Attendees</label>
-                                                        <input type="number" name="attendees" class="w-full border rounded px-2 py-1" value="{{ $booking->attendees }}" required />
-                                                    </div>
-                                                    <div class="flex justify-end mt-4">
-                                                        <button type="button" class="px-4 py-2 text-gray-600" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save Changes</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <!-- Cancel Booking Modal (same logic) -->
-                                    <div id="cancelBookingModal{{ $booking->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cancelBookingModalLabel{{ $booking->id }}" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <form method="POST" action="{{ route('bookings.destroy', $booking->id) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <div class="modal-content p-4">
-                                                    <h3 class="text-lg font-semibold mb-4">Cancel Booking</h3>
-                                                    <p>Are you sure you want to cancel <strong>{{ $booking->title }}</strong>?</p>
-                                                    <div class="flex justify-end mt-4">
-                                                        <button type="button" class="px-4 py-2 text-gray-600" data-bs-dismiss="modal">No</button>
-                                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">Yes, Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
+                        </div>
                     </div>
-                </div>
 
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6 border-b">
-                        <h2 class="text-xl font-semibold">Available Rooms</h2>
-                    </div>
                     <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @foreach($rooms as $room)
-                                <div class="border border-gray-200 rounded-lg p-6 hover:border-gray-300">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <h3 class="text-lg font-semibold">{{ $room->name }}</h3>
-                                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm">
-                                            {{ $room->capacity }} seats
-                                        </span>
-                                    </div>
-                                    <div class="mb-4">
-                                        <h4 class="text-sm font-medium text-gray-700 mb-2">Equipment:</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            @if(is_array($room->equipment))
-                                                @foreach($room->equipment as $item)
-                                                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm">{{ $item }}</span>
-                                                @endforeach
-                                            @else
-                                                <span class="text-gray-400">None</span>
-                                            @endif
+                        @forelse($bookings as $booking)
+                            @php
+                                $statusColor = match($booking->status) {
+                                    'confirmed' => 'bg-green-100 text-green-800 border-green-200',
+                                    'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                    'rejected' => 'bg-red-100 text-red-800 border-red-200',
+                                    default => 'bg-gray-100 text-gray-800 border-gray-200'
+                                };
+                            @endphp
+
+                            <div class="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow duration-200">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-lg font-semibold text-gray-900">{{ $booking->title }}</h3>
+                                            <span class="px-2 py-1 rounded text-xs font-medium border {{ $statusColor }}">
+                                                {{ ucfirst($booking->status) }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                </svg>
+                                                <span>{{ $booking->room->name }}</span>
+                                            </div>
+                                            
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>{{ $booking->start_time }} - {{ $booking->end_time }}</span>
+                                            </div>
+                                            
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                <span>{{ $booking->organizer }}</span>
+                                            </div>
+                                            
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                <span>{{ $booking->attendees }} attendees</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-4">
-                                        <h4 class="text-sm font-medium text-gray-700 mb-2">Today's Bookings:</h4>
-                                        <div class="space-y-1">
-                                            @php
-                                                $roomBookings = $bookings->filter(function($b) use ($room, $date) {
-                                                    return $b->room_id == $room->id && $b->date == $date;
-                                                });
-                                            @endphp
-                                            @forelse($roomBookings as $booking)
-                                                <div class="text-sm text-gray-600">
-                                                    {{ $booking->start_time }} - {{ $booking->end_time }}: {{ $booking->title }}
-                                                </div>
-                                            @empty
-                                                <p class="text-sm text-green-600">Available all day</p>
-                                            @endforelse
-                                        </div>
-                                    </div>
-                                    <!-- Book Room Button triggers modal -->
-                                    <button type="button" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                                        data-bs-toggle="modal" data-bs-target="#bookingModal">
-                                        Book Room
-                                    </button>
                                 </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-12">
+                                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No bookings for {{ \Carbon\Carbon::parse($date)->format('M d, Y') }}</h3>
+                                <p class="text-gray-500">Start by creating a new booking using the form on the left.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST" action="{{ route('bookings.store') }}">
-                @csrf
-                <div class="modal-content p-4">
-                    <h3 class="text-lg font-semibold mb-4">Book a Room</h3>
-                    <div class="mb-2">
-                        <label>Room</label>
-                        <select name="room_id" class="w-full border rounded px-2 py-1" required>
-                            @foreach($rooms as $room)
-                                <option value="{{ $room->id }}">{{ $room->name }} (Capacity: {{ $room->capacity }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label>Event Title</label>
-                        <input type="text" name="title" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="mb-2">
-                        <label>Date</label>
-                        <input type="date" name="date" value="{{ $date }}" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="mb-2">
-                        <label>Start Time</label>
-                        <input type="time" name="start_time" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="mb-2">
-                        <label>End Time</label>
-                        <input type="time" name="end_time" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="mb-2">
-                        <label>Organizer</label>
-                        <input type="text" name="organizer" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="mb-2">
-                        <label>Number of Attendees</label>
-                        <input type="number" name="attendees" class="w-full border rounded px-2 py-1" required />
-                    </div>
-                    <div class="flex justify-end mt-4">
-                        <button type="button" class="px-4 py-2 text-gray-600" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Book Room</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 </div>
-<!-- Bootstrap JS for modal functionality -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // Close modal after form submit for Edit Booking
-    document.querySelectorAll('form[action*="bookings.update"]').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            setTimeout(() => {
-                const modalId = '#editBookingModal' + this.action.split('/').pop();
-                const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(modalId));
-                modal.hide();
-            }, 500);
-        });
+// Auto-fill end time based on start time (1 hour later)
+document.addEventListener('DOMContentLoaded', function() {
+    const startTimeInput = document.querySelector('input[name="start_time"]');
+    const endTimeInput = document.querySelector('input[name="end_time"]');
+    
+    startTimeInput.addEventListener('change', function() {
+        if (this.value && !endTimeInput.value) {
+            const startTime = new Date(`1970-01-01T${this.value}:00`);
+            startTime.setHours(startTime.getHours() + 1);
+            const endTime = startTime.toTimeString().slice(0, 5);
+            endTimeInput.value = endTime;
+        }
     });
-
-    // Close modal after form submit for Cancel Booking
-    document.querySelectorAll('form[action*="bookings.destroy"]').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            setTimeout(() => {
-                const modalId = '#cancelBookingModal' + this.action.split('/').pop();
-                const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(modalId));
-                modal.hide();
-            }, 500);
-        });
-    });
-
-    // Close modal on Cancel/No button click
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = bootstrap.Modal.getOrCreateInstance(this.closest('.modal'));
-            modal.hide();
-        });
-    });
+});
 </script>
 @endsection

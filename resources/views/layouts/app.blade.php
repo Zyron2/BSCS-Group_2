@@ -211,7 +211,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 flex flex-col min-h-screen">
     <!-- Modern Header with Gradient Background -->
     <header class="gradient-animated shadow-lg">
         <nav class="container mx-auto px-4 lg:px-8">
@@ -465,7 +465,7 @@
             @endauth
         </nav>
     </header>
-    <main>
+    <main class="flex-1">
         @yield('content')
     </main>
 
