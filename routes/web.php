@@ -56,6 +56,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
         Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
     });
+
+    // Settings routes
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'show'])->name('settings.show');
+    Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+    
+    // Support routes
+    Route::get('/support', [App\Http\Controllers\SupportController::class, 'show'])->name('support.show');
+    Route::post('/support', [App\Http\Controllers\SupportController::class, 'submit'])->name('support.submit');
 });
 
 // Admin dashboard routes (for admin users only)

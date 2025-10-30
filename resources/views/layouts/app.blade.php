@@ -7,6 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Add other CSS or meta tags as needed -->
     
+    <!-- Dark Mode Script - Load BEFORE body renders -->
+    <script>
+        // Check for saved dark mode preference or default to light mode
+        if (localStorage.getItem('darkMode') === 'enabled' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    
     <!-- Custom Styles for Enhanced Header -->
     <style>
         /* Custom gradient animations */
@@ -209,6 +220,68 @@
         .avatar-border:hover::before {
             opacity: 1;
         }
+
+        /* Dark mode styles */
+        .dark body {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        
+        .dark .bg-gray-50 {
+            background-color: #2d3748;
+        }
+        
+        .dark .bg-white {
+            background-color: #1a202c;
+        }
+        
+        .dark .text-gray-900 {
+            color: #f7fafc;
+        }
+        
+        .dark .text-gray-700 {
+            color: #e2e8f0;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cbd5e0;
+        }
+        
+        .dark .text-gray-500 {
+            color: #a0aec0;
+        }
+        
+        .dark .border-gray-200 {
+            border-color: #4a5568;
+        }
+        
+        .dark .border-gray-300 {
+            border-color: #4a5568;
+        }
+        
+        .dark .hover\:bg-gray-50:hover {
+            background-color: #2d3748;
+        }
+        
+        .dark input,
+        .dark textarea,
+        .dark select {
+            background-color: #2d3748;
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+        
+        .dark input:focus,
+        .dark textarea:focus,
+        .dark select:focus {
+            border-color: #4299e1;
+            background-color: #374151;
+        }
+        
+        /* Smooth transition for dark mode */
+        body, .bg-white, .bg-gray-50, input, textarea, select {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
@@ -395,7 +468,7 @@
                                         </div>
                                     </a>
                                     
-                                    <a href="#" class="dropdown-item flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 transition-all duration-200 group">
+                                    <a href="{{ route('settings.show') }}" class="dropdown-item flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 transition-all duration-200 group">
                                         <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-200 transition-colors">
                                             <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -408,7 +481,7 @@
                                         </div>
                                     </a>
 
-                                    <a href="#" class="dropdown-item flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 transition-all duration-200 group">
+                                    <a href="{{ route('support.show') }}" class="dropdown-item flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 transition-all duration-200 group">
                                         <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors">
                                             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -573,7 +646,7 @@
                     list.innerHTML = `
                         <div class="p-6 text-center text-gray-500">
                             <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9"></path>
                             </svg>
                             <p class="font-medium text-gray-700">No notifications</p>
                             <p class="text-xs mt-1 text-gray-500">You'll see booking updates here</p>
