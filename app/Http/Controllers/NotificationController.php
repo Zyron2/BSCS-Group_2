@@ -2,45 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
+use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()
-            ->latest()
-            ->take(10)
-            ->get();
+        try {
+            $notifications = auth()->user()->notifications()
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
+                ->get();
 
-        return response()->json($notifications);
+            return response()->json($notifications);
+        } catch (\Exception $e) {
+            \Log::error('Notification fetch error: ' . $e->getMessage());
+            return response()->json([], 200);
+        }
     }
 
     public function markAsRead($id)
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
-        $notification->markAsRead();
+        try {
+            $notification = Notification::where('id', $id)
+                ->where('user_id', auth()->id())
+                ->first();
 
-        return response()->json(['success' => true]);
+            if ($notification) {
+                $notification->update(['read_at' => now()]);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            \Log::error('Mark as read error: ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
     }
 
     public function markAllAsRead()
     {
-        Auth::user()->notifications()
-            ->whereNull('read_at')
-            ->update(['read_at' => now()]);
+        try {
+            Notification::where('user_id', auth()->id())
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
 
-        return response()->json(['success' => true]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            \Log::error('Mark all as read error: ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
     }
 
     public function getUnreadCount()
     {
-        $count = Auth::user()->notifications()
-            ->whereNull('read_at')
-            ->count();
+        try {
+            $count = auth()->user()->notifications()
+                ->whereNull('read_at')
+                ->count();
 
-        return response()->json(['count' => $count]);
+            return response()->json(['count' => $count]);
+        } catch (\Exception $e) {
+            \Log::error('Get count error: ' . $e->getMessage());
+            return response()->json(['count' => 0]);
+        }
     }
 }

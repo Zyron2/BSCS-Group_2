@@ -3,49 +3,50 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show the user's profile page.
-     */
     public function show()
     {
-        return view('profile.show');
+        return view('profile.show', ['user' => auth()->user()]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        // Validate input
         $request->validate([
             'name' => 'required|string|max:255',
-            'profile' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|confirmed',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        // Update name
-        $user->name = $request->input('name');
+        // Update basic info
+        $user->name = $request->name;
+        $user->email = $request->email;
 
-        // Handle profile photo upload
-        if ($request->hasFile('profile')) {
-            // Delete old profile if exists
-            if ($user->profile && Storage::disk('public')->exists(str_replace('/storage/', '', $user->profile))) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $user->profile));
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
+            if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+                Storage::disk('public')->delete($user->profile_picture);
             }
 
-            // Store new profile photo
-            $path = $request->file('profile')->store('profiles', 'public');
-            $user->profile = '/storage/' . $path;
+            // Store new profile picture
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $user->profile_picture = $path;
         }
 
         $user->save();
 
-        return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
 }

@@ -318,10 +318,16 @@
                                 <div class="flex items-center space-x-3">
                                     <!-- Modern Profile Icon -->
                                     <div class="relative">
-                                        <div class="profile-icon w-10 h-10 rounded-full flex items-center justify-center shadow-md">
-                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                            </svg>
+                                        <div class="profile-icon w-10 h-10 rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                                            @if(auth()->user()->profile_picture)
+                                                <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" 
+                                                     alt="{{ auth()->user()->name }}" 
+                                                     class="w-full h-full object-cover">
+                                            @else
+                                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
+                                            @endif
                                         </div>
                                         <!-- Online Status Indicator -->
                                         <div class="status-indicator pulse"></div>
@@ -349,10 +355,16 @@
                                     <div class="flex items-center space-x-4 relative z-10">
                                         <!-- Profile Icon in Dropdown -->
                                         <div class="relative">
-                                            <div class="w-16 h-16 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center border-2 border-white border-opacity-30">
-                                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                </svg>
+                                            <div class="w-16 h-16 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center border-2 border-white border-opacity-30 overflow-hidden">
+                                                @if(auth()->user()->profile_picture)
+                                                    <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" 
+                                                         alt="{{ auth()->user()->name }}" 
+                                                         class="w-full h-full object-cover">
+                                                @else
+                                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                    </svg>
+                                                @endif
                                             </div>
                                             <!-- Status indicator for dropdown -->
                                             <div class="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
@@ -480,19 +492,15 @@
             const arrow = document.getElementById('dropdownArrow');
             
             if (dropdown.classList.contains('show')) {
-                // Hide dropdown
                 dropdown.classList.remove('show');
                 arrow.classList.remove('rotate-180');
-                // Add a slight delay before hiding to complete animation
                 setTimeout(() => {
                     if (!dropdown.classList.contains('show')) {
                         dropdown.style.display = 'none';
                     }
                 }, 300);
             } else {
-                // Show dropdown
                 dropdown.style.display = 'block';
-                // Force reflow for animation
                 dropdown.offsetHeight;
                 dropdown.classList.add('show');
                 arrow.classList.add('rotate-180');
@@ -511,134 +519,188 @@
         let notificationsVisible = false;
 
         function toggleNotifications() {
+            console.log('Toggle notifications clicked'); // Debug
             const dropdown = document.getElementById('notificationsDropdown');
             
             if (notificationsVisible) {
-                dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
+                setTimeout(() => {
+                    dropdown.style.display = 'none';
+                }, 300);
                 notificationsVisible = false;
             } else {
                 dropdown.style.display = 'block';
+                setTimeout(() => {
+                    dropdown.classList.add('show');
+                }, 10);
                 notificationsVisible = true;
                 loadNotifications();
             }
         }
 
         function loadNotifications() {
-            fetch('/notifications')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(notifications => {
-                    const list = document.getElementById('notificationsList');
-                    
-                    if (notifications.length === 0) {
-                        list.innerHTML = `
-                            <div class="p-6 text-center text-gray-500">
-                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <p>No booking notifications</p>
-                                <p class="text-xs mt-1">You'll see booking updates here</p>
-                            </div>
-                        `;
-                        return;
-                    }
+            console.log('Loading notifications...'); // Debug
+            const list = document.getElementById('notificationsList');
+            
+            // Show loading state
+            list.innerHTML = `
+                <div class="p-6 text-center text-gray-500">
+                    <svg class="animate-spin w-8 h-8 mx-auto mb-2 text-blue-500" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-sm">Loading notifications...</p>
+                </div>
+            `;
 
-                    list.innerHTML = notifications.map(notification => {
-                        let iconColor = 'bg-blue-100 text-blue-600';
-                        let icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>`;
-                        
-                        if (notification.type === 'booking') {
-                            if (notification.title.includes('Approved')) {
-                                iconColor = 'bg-green-100 text-green-600';
-                                icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`;
-                            } else if (notification.title.includes('Reminder')) {
-                                iconColor = 'bg-yellow-100 text-yellow-600';
-                                icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
-                            }
-                        }
-
-                        return `
-                            <div class="border-b border-gray-100 p-4 hover:bg-gray-50 cursor-pointer ${!notification.read_at ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}" onclick="markAsRead(${notification.id})">
-                                <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 ${iconColor} rounded-full flex items-center justify-center">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                ${icon}
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between">
-                                            <p class="font-medium text-gray-900">${notification.title}</p>
-                                            ${!notification.read_at ? '<div class="w-2 h-2 bg-blue-500 rounded-full"></div>' : ''}
-                                        </div>
-                                        <p class="text-sm text-gray-600 mt-1">${notification.message}</p>
-                                        <p class="text-xs text-gray-400 mt-1">${formatDate(notification.created_at)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                })
-                .catch(error => {
-                    console.error('Error loading notifications:', error);
-                    const list = document.getElementById('notificationsList');
+            fetch('/notifications', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status); // Debug
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(notifications => {
+                console.log('Notifications received:', notifications); // Debug
+                
+                if (!notifications || notifications.length === 0) {
                     list.innerHTML = `
                         <div class="p-6 text-center text-gray-500">
-                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            <p>Error loading notifications</p>
+                            <p class="font-medium text-gray-700">No notifications</p>
+                            <p class="text-xs mt-1 text-gray-500">You'll see booking updates here</p>
                         </div>
                     `;
-                });
+                    return;
+                }
+
+                list.innerHTML = notifications.map(notification => {
+                    let iconColor = 'bg-blue-100 text-blue-600';
+                    let icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>`;
+                    
+                    if (notification.title.includes('Approved') || notification.title.includes('Confirmed')) {
+                        iconColor = 'bg-green-100 text-green-600';
+                        icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+                    } else if (notification.title.includes('Cancelled') || notification.title.includes('Deleted') || notification.title.includes('Rejected')) {
+                        iconColor = 'bg-red-100 text-red-600';
+                        icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+                    } else if (notification.title.includes('Reminder') || notification.title.includes('Pending')) {
+                        iconColor = 'bg-yellow-100 text-yellow-600';
+                        icon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+                    }
+
+                    return `
+                        <div class="border-b border-gray-100 p-4 hover:bg-gray-50 cursor-pointer transition-colors ${!notification.read_at ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}" 
+                             onclick="markAsRead(${notification.id})">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 ${iconColor} rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            ${icon}
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <p class="font-semibold text-gray-900 text-sm">${notification.title}</p>
+                                        ${!notification.read_at ? '<div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>' : ''}
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed">${notification.message}</p>
+                                    <p class="text-xs text-gray-400 mt-1">${formatDate(notification.created_at)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error); // Debug
+                list.innerHTML = `
+                    <div class="p-6 text-center text-red-500">
+                        <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.959-1.333-2.73 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <p class="font-medium">Failed to load notifications</p>
+                        <p class="text-xs mt-1 text-gray-500">Please try again later</p>
+                        <button onclick="loadNotifications()" class="mt-3 text-sm text-blue-600 hover:text-blue-800 underline">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            });
         }
 
         function markAsRead(notificationId) {
+            console.log('Marking notification as read:', notificationId); // Debug
+            
             fetch(`/notifications/${notificationId}/read`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
-            }).then(() => {
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Mark as read response:', data); // Debug
                 updateNotificationCount();
                 loadNotifications();
-            });
+            })
+            .catch(error => console.error('Error marking as read:', error));
         }
 
         function markAllAsRead() {
+            console.log('Marking all as read'); // Debug
+            
             fetch('/notifications/read-all', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
-            }).then(() => {
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Mark all as read response:', data); // Debug
                 updateNotificationCount();
                 loadNotifications();
-            });
+            })
+            .catch(error => console.error('Error marking all as read:', error));
         }
 
         function updateNotificationCount() {
-            fetch('/notifications/count')
-                .then(response => response.json())
-                .then(data => {
-                    const badge = document.getElementById('notificationBadge');
-                    if (data.count > 0) {
-                        badge.textContent = data.count;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating notification count:', error);
-                });
+            console.log('Updating notification count...'); // Debug
+            
+            fetch('/notifications/count', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Notification count:', data.count); // Debug
+                const badge = document.getElementById('notificationBadge');
+                if (data.count > 0) {
+                    badge.textContent = data.count > 99 ? '99+' : data.count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating notification count:', error);
+            });
         }
 
         function formatDate(dateString) {
@@ -652,48 +714,53 @@
             if (minutes < 1) return 'Just now';
             if (minutes < 60) return `${minutes}m ago`;
             if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days}d ago`;
+            return date.toLocaleDateString();
         }
 
         // Load notification count on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing notifications...'); // Debug
             updateNotificationCount();
             
             // Update count every 30 seconds
             setInterval(updateNotificationCount, 30000);
         });
 
-        // Close notifications dropdown when clicking outside
+        // Close dropdowns when clicking outside
         window.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('notificationsDropdown');
-            const button = dropdown?.previousElementSibling;
+            // Close notifications dropdown
+            const notifDropdown = document.getElementById('notificationsDropdown');
+            const notifButton = notifDropdown?.previousElementSibling;
             
-            if (dropdown && !dropdown.contains(e.target) && !button?.contains(e.target)) {
+            if (notifDropdown && !notifDropdown.contains(e.target) && !notifButton?.contains(e.target)) {
                 if (notificationsVisible) {
-                    dropdown.style.display = 'none';
+                    notifDropdown.classList.remove('show');
+                    setTimeout(() => {
+                        notifDropdown.style.display = 'none';
+                    }, 300);
                     notificationsVisible = false;
                 }
             }
-        });
 
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('profileDropdown');
-            const button = dropdown?.previousElementSibling;
+            // Close profile dropdown
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileButton = profileDropdown?.previousElementSibling;
             
-            if (dropdown && !dropdown.contains(e.target) && !button?.contains(e.target)) {
-                if (dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
+            if (profileDropdown && !profileDropdown.contains(e.target) && !profileButton?.contains(e.target)) {
+                if (profileDropdown.classList.contains('show')) {
+                    profileDropdown.classList.remove('show');
                     document.getElementById('dropdownArrow')?.classList.remove('rotate-180');
                     setTimeout(() => {
-                        if (!dropdown.classList.contains('show')) {
-                            dropdown.style.display = 'none';
+                        if (!profileDropdown.classList.contains('show')) {
+                            profileDropdown.style.display = 'none';
                         }
                     }, 300);
                 }
             }
             
-            // Close mobile menu when clicking outside
+            // Close mobile menu
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileButton = document.querySelector('[onclick="toggleMobileMenu()"]');
             
@@ -703,50 +770,17 @@
             }
         });
 
-        // Add smooth scroll behavior for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Add loading states for navigation links
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', function() {
-                // Add a subtle loading effect
-                this.style.opacity = '0.7';
-                setTimeout(() => {
-                    this.style.opacity = '1';
-                }, 200);
-            });
-        });
-
         // Initialize dropdown as hidden
         document.addEventListener('DOMContentLoaded', function() {
             const dropdown = document.getElementById('profileDropdown');
             if (dropdown) {
                 dropdown.style.display = 'none';
             }
-        });
-
-        // Add hover effects for dropdown items
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdownItems = document.querySelectorAll('.dropdown-item');
-            dropdownItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateX(4px)';
-                });
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateX(0)';
-                });
-            });
+            
+            const notifDropdown = document.getElementById('notificationsDropdown');
+            if (notifDropdown) {
+                notifDropdown.style.display = 'none';
+            }
         });
     </script>
 </body>
