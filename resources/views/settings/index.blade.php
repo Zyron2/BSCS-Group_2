@@ -28,20 +28,58 @@
                     </h2>
                 </div>
                 <div class="p-6 space-y-6">
-                    <!-- Dark Mode -->
-                    <div class="flex items-center justify-between">
+                    <!-- Dark Mode with Animated Switch -->
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl border border-purple-100">
                         <div class="flex-1">
-                            <label class="text-sm font-medium text-gray-900 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-                                </svg>
-                                Dark Mode
+                            <label class="text-base font-semibold text-gray-900 flex items-center cursor-pointer" for="darkModeToggle">
+                                <div class="relative mr-3">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                                        <svg id="darkModeIcon" class="w-6 h-6 text-white transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-900 font-semibold">Dark Mode</div>
+                                    <div class="text-sm text-gray-600 mt-1">Switch between light and dark themes</div>
+                                </div>
                             </label>
-                            <p class="text-sm text-gray-500 mt-1">Use dark theme across the application</p>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="dark_mode" value="1" class="sr-only peer" {{ isset($settings['dark_mode']) && $settings['dark_mode'] ? 'checked' : '' }} onchange="toggleDarkMode(this)">
-                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                        
+                        <!-- Animated Toggle Switch -->
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input type="checkbox" 
+                                   id="darkModeToggle"
+                                   name="dark_mode" 
+                                   value="1" 
+                                   class="sr-only toggle-checkbox" 
+                                   {{ isset($settings['dark_mode']) && $settings['dark_mode'] ? 'checked' : '' }} 
+                                   onchange="toggleDarkMode(this)">
+                            
+                            <!-- Toggle Background -->
+                            <div class="toggle-bg w-20 h-10 bg-gray-300 rounded-full shadow-lg transition-all duration-500 relative overflow-hidden group-hover:shadow-xl">
+                                
+                                <!-- Stars Animation (appears in dark mode) -->
+                                <div class="stars-container absolute inset-0 opacity-0 transition-opacity duration-500">
+                                    <div class="absolute top-2 left-4 w-1 h-1 bg-white rounded-full animate-pulse"></div>
+                                    <div class="absolute top-5 left-7 w-1 h-1 bg-white rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                                    <div class="absolute top-3 left-10 w-1 h-1 bg-white rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                                </div>
+                                
+                                <!-- Toggle Circle/Button -->
+                                <div class="toggle-circle absolute top-1 left-1 bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-500">
+                                    <!-- Sun Icon (Light Mode) -->
+                                    <svg class="sun-icon w-5 h-5 text-yellow-500 absolute transition-all duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    
+                                    <!-- Moon Icon (Dark Mode) -->
+                                    <svg class="moon-icon w-5 h-5 text-indigo-600 absolute opacity-0 transition-all duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </label>
                     </div>
 
@@ -173,38 +211,135 @@
     </div>
 </div>
 
+<style>
+/* Toggle switch when checked */
+.toggle-checkbox:checked ~ .toggle-bg {
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+}
+
+.toggle-checkbox:checked ~ .toggle-bg .toggle-circle {
+    transform: translateX(2.5rem); /* 40px slide to the right */
+}
+
+.toggle-checkbox:checked ~ .toggle-bg .stars-container {
+    opacity: 1;
+}
+
+.toggle-checkbox:checked ~ .toggle-bg .sun-icon {
+    opacity: 0;
+    transform: rotate(180deg) scale(0);
+}
+
+.toggle-checkbox:checked ~ .toggle-bg .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+.toggle-checkbox:focus ~ .toggle-bg {
+    ring: 4px;
+    ring-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Moon icon initial state */
+.moon-icon {
+    transform: rotate(-180deg) scale(0);
+}
+
+/* Smooth icon rotation */
+#darkModeIcon {
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.dark #darkModeIcon {
+    transform: rotate(360deg);
+}
+
+/* Glowing effect on hover */
+.group:hover .toggle-bg {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Pulse animation for notification dot */
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+</style>
+
 <script>
 function toggleDarkMode(checkbox) {
+    const icon = document.getElementById('darkModeIcon');
+    
     if (checkbox.checked) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('darkMode', 'enabled');
         
-        // Visual feedback
-        showToast('Dark mode enabled');
+        // Rotate icon
+        icon.style.transform = 'rotate(360deg) scale(1.1)';
+        setTimeout(() => {
+            icon.style.transform = 'rotate(360deg) scale(1)';
+        }, 300);
+        
+        // Show toast notification
+        showToast('🌙 Dark mode enabled', 'dark');
     } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('darkMode', 'disabled');
         
-        // Visual feedback
-        showToast('Light mode enabled');
+        // Rotate icon back
+        icon.style.transform = 'rotate(0deg) scale(1.1)';
+        setTimeout(() => {
+            icon.style.transform = 'rotate(0deg) scale(1)';
+        }, 300);
+        
+        // Show toast notification
+        showToast('☀️ Light mode enabled', 'light');
     }
 }
 
-function showToast(message) {
+function showToast(message, theme) {
     const toast = document.createElement('div');
-    toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
-    toast.textContent = message;
+    const bgColor = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
+    const textColor = theme === 'dark' ? 'text-white' : 'text-gray-800';
+    const borderColor = theme === 'dark' ? 'border-gray-700' : 'border-gray-200';
+    
+    toast.className = `fixed bottom-4 right-4 ${bgColor} ${textColor} px-6 py-4 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-0 opacity-100 border ${borderColor}`;
+    toast.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+                ${theme === 'dark' ? 
+                    '<div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg></div>' :
+                    '<div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg></div>'
+                }
+            </div>
+            <div>
+                <p class="font-semibold">${message}</p>
+                <p class="text-xs opacity-75 mt-1">Theme preference saved</p>
+            </div>
+        </div>
+    `;
+    
     document.body.appendChild(toast);
     
+    // Animate in
+    setTimeout(() => {
+        toast.style.transform = 'translateY(0) scale(1)';
+    }, 10);
+    
+    // Animate out and remove
     setTimeout(() => {
         toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px) scale(0.9)';
         setTimeout(() => toast.remove(), 300);
-    }, 2000);
+    }, 3000);
 }
 
 // Load dark mode preference on page load
 document.addEventListener('DOMContentLoaded', function() {
     const darkModeCheckbox = document.querySelector('input[name="dark_mode"]');
+    const icon = document.getElementById('darkModeIcon');
     
     // Check if dark mode is enabled in localStorage
     const isDarkMode = localStorage.getItem('darkMode') === 'enabled' || 
@@ -216,6 +351,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Apply dark mode if enabled
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
+            if (icon) {
+                icon.style.transform = 'rotate(360deg)';
+            }
         }
     }
 });
