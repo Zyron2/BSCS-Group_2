@@ -135,10 +135,15 @@
         
         .dark .bg-white {
             background-color: #1a202c;
+            border-color: #4a5568;
         }
         
         .dark .text-gray-900 {
             color: #f7fafc;
+        }
+        
+        .dark .text-gray-800 {
+            color: #e2e8f0;
         }
         
         .dark .text-gray-700 {
@@ -153,6 +158,10 @@
             color: #a0aec0;
         }
         
+        .dark .text-gray-400 {
+            color: #718096;
+        }
+        
         .dark .border-gray-200 {
             border-color: #4a5568;
         }
@@ -163,6 +172,14 @@
         
         .dark .hover\:bg-gray-50:hover {
             background-color: #2d3748;
+        }
+        
+        .dark .bg-gray-100 {
+            background-color: #374151;
+        }
+        
+        .dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+            border-color: #4a5568;
         }
         
         .dark input,
@@ -178,6 +195,119 @@
         .dark select:focus {
             border-color: #4299e1;
             background-color: #374151;
+        }
+        
+        .dark input::placeholder,
+        .dark textarea::placeholder {
+            color: #a0aec0;
+        }
+        
+        /* Dark mode for cards and panels */
+        .dark .shadow-md,
+        .dark .shadow-lg,
+        .dark .shadow-xl,
+        .dark .shadow-2xl {
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Dark mode for dropdown menus */
+        .dark #profileDropdown,
+        .dark #notificationsDropdown {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+        
+        .dark .dropdown-item:hover {
+            background-color: #2d3748;
+        }
+        
+        /* Dark mode for table headers */
+        .dark thead {
+            background-color: #2d3748;
+        }
+        
+        .dark th {
+            color: #cbd5e0;
+        }
+        
+        .dark tbody tr:hover {
+            background-color: #2d3748;
+        }
+        
+        /* Dark mode for status badges */
+        .dark .bg-green-100 {
+            background-color: #064e3b;
+        }
+        
+        .dark .text-green-800 {
+            color: #a7f3d0;
+        }
+        
+        .dark .bg-yellow-100 {
+            background-color: #78350f;
+        }
+        
+        .dark .text-yellow-800 {
+            color: #fde68a;
+        }
+        
+        .dark .bg-red-100 {
+            background-color: #7f1d1d;
+        }
+        
+        .dark .text-red-800 {
+            color: #fecaca;
+        }
+        
+        .dark .bg-blue-100 {
+            background-color: #1e3a8a;
+        }
+        
+        .dark .text-blue-800 {
+            color: #bfdbfe;
+        }
+        
+        /* Dark mode for borders */
+        .dark .border-green-200,
+        .dark .border-green-300,
+        .dark .border-green-400 {
+            border-color: #065f46;
+        }
+        
+        .dark .border-yellow-200,
+        .dark .border-yellow-300,
+        .dark .border-yellow-400 {
+            border-color: #92400e;
+        }
+        
+        .dark .border-red-200,
+        .dark .border-red-300,
+        .dark .border-red-400 {
+            border-color: #991b1b;
+        }
+        
+        .dark .border-blue-200,
+        .dark .border-blue-300,
+        .dark .border-blue-400 {
+            border-color: #1e40af;
+        }
+        
+        /* Dark mode for gradients */
+        .dark .bg-gradient-to-br {
+            /* Keep gradients as is for visual appeal */
+        }
+        
+        /* Dark mode for hover states */
+        .dark .hover\:bg-blue-50:hover {
+            background-color: #1e3a8a;
+        }
+        
+        .dark .hover\:bg-red-50:hover {
+            background-color: #7f1d1d;
+        }
+        
+        .dark .hover\:bg-green-50:hover {
+            background-color: #064e3b;
         }
         
         /* Smooth transition for dark mode */

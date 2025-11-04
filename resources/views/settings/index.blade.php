@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
-            <p class="text-gray-600 mt-2">Manage your preferences and account settings</p>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Manage your preferences and account settings</p>
         </div>
 
         @if(session('success'))
-            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+            <div class="mb-6 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded-lg">
                 {{ session('success') }}
             </div>
         @endif
@@ -18,7 +18,7 @@
             @csrf
 
             <!-- Appearance Settings -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
                 <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-indigo-600">
                     <h2 class="text-xl font-semibold text-white flex items-center">
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,20 +29,19 @@
                 </div>
                 <div class="p-6 space-y-6">
                     <!-- Dark Mode with Animated Switch -->
-                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl border border-purple-100">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
                         <div class="flex-1">
-                            <label class="text-base font-semibold text-gray-900 flex items-center cursor-pointer" for="darkModeToggle">
+                            <label class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center cursor-pointer" for="darkModeToggle">
                                 <div class="relative mr-3">
                                     <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                                         <svg id="darkModeIcon" class="w-6 h-6 text-white transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                                         </svg>
                                     </div>
-                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
                                 </div>
                                 <div>
-                                    <div class="text-gray-900 font-semibold">Dark Mode</div>
-                                    <div class="text-sm text-gray-600 mt-1">Switch between light and dark themes</div>
+                                    <div class="text-gray-900 dark:text-gray-100 font-semibold">Dark Mode</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Switch between light and dark themes</div>
                                 </div>
                             </label>
                         </div>
@@ -58,7 +57,7 @@
                                    onchange="toggleDarkMode(this)">
                             
                             <!-- Toggle Background -->
-                            <div class="toggle-bg w-20 h-10 bg-gray-300 rounded-full shadow-lg transition-all duration-500 relative overflow-hidden group-hover:shadow-xl">
+                            <div class="toggle-bg w-20 h-10 bg-gray-300 dark:bg-gray-600 rounded-full shadow-lg transition-all duration-500 relative overflow-hidden group-hover:shadow-xl border-2 border-gray-400 dark:border-gray-500">
                                 
                                 <!-- Stars Animation (appears in dark mode) -->
                                 <div class="stars-container absolute inset-0 opacity-0 transition-opacity duration-500">
@@ -68,7 +67,7 @@
                                 </div>
                                 
                                 <!-- Toggle Circle/Button -->
-                                <div class="toggle-circle absolute top-1 left-1 bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-500">
+                                <div class="toggle-circle absolute top-1 left-1 bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-500 border-2 border-gray-300 dark:border-gray-400">
                                     <!-- Sun Icon (Light Mode) -->
                                     <svg class="sun-icon w-5 h-5 text-yellow-500 absolute transition-all duration-300" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
@@ -85,13 +84,13 @@
 
                     <!-- Language -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-2 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <label class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                             </svg>
                             Language
                         </label>
-                        <select name="language" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <select name="language" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <option value="en" {{ isset($settings['language']) && $settings['language'] == 'en' ? 'selected' : '' }}>English</option>
                             <option value="es" {{ isset($settings['language']) && $settings['language'] == 'es' ? 'selected' : '' }}>Español</option>
                             <option value="fr" {{ isset($settings['language']) && $settings['language'] == 'fr' ? 'selected' : '' }}>Français</option>
@@ -101,13 +100,13 @@
 
                     <!-- Date Format -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-2 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <label class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             Date Format
                         </label>
-                        <select name="date_format" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <select name="date_format" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <option value="Y-m-d" {{ isset($settings['date_format']) && $settings['date_format'] == 'Y-m-d' ? 'selected' : '' }}>YYYY-MM-DD (2024-01-15)</option>
                             <option value="m/d/Y" {{ isset($settings['date_format']) && $settings['date_format'] == 'm/d/Y' ? 'selected' : '' }}>MM/DD/YYYY (01/15/2024)</option>
                             <option value="d/m/Y" {{ isset($settings['date_format']) && $settings['date_format'] == 'd/m/Y' ? 'selected' : '' }}>DD/MM/YYYY (15/01/2024)</option>
@@ -117,13 +116,13 @@
 
                     <!-- Time Format -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-2 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <label class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             Time Format
                         </label>
-                        <select name="time_format" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <select name="time_format" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <option value="24h" {{ isset($settings['time_format']) && $settings['time_format'] == '24h' ? 'selected' : '' }}>24-hour (14:30)</option>
                             <option value="12h" {{ isset($settings['time_format']) && $settings['time_format'] == '12h' ? 'selected' : '' }}>12-hour (2:30 PM)</option>
                         </select>
@@ -132,7 +131,7 @@
             </div>
 
             <!-- Notification Settings -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
                 <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-600">
                     <h2 class="text-xl font-semibold text-white flex items-center">
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,25 +142,25 @@
                 </div>
                 <div class="p-6 space-y-6">
                     <!-- Email Notifications -->
-                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
                         <div class="flex-1">
-                            <label class="text-sm font-medium text-gray-900 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label class="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                                 Email Notifications
                             </label>
-                            <p class="text-sm text-gray-600 mt-1">Receive email updates about your bookings</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Receive email updates about your bookings</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" 
                                    name="email_notifications" 
                                    value="1" 
-                                   class="sr-only toggle-checkbox" 
+                                   class="sr-only notification-toggle" 
                                    {{ isset($settings['email_notifications']) && $settings['email_notifications'] ? 'checked' : '' }}>
-                            <div class="toggle-bg w-14 h-7 bg-gray-300 rounded-full shadow-md transition-all duration-300 group-hover:shadow-lg">
-                                <div class="toggle-circle absolute top-0.5 left-0.5 bg-white w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform duration-300">
-                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="notification-toggle-bg w-16 h-8 bg-gray-300 dark:bg-gray-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl border-2 border-gray-400 dark:border-gray-500">
+                                <div class="notification-toggle-circle absolute top-0.5 left-0.5 bg-white w-7 h-7 rounded-full shadow-md flex items-center justify-center transition-transform duration-300 border-2 border-gray-300 dark:border-gray-400">
+                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
                                     </svg>
@@ -171,25 +170,25 @@
                     </div>
 
                     <!-- Booking Reminders -->
-                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
                         <div class="flex-1">
-                            <label class="text-sm font-medium text-gray-900 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label class="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Booking Reminders
                             </label>
-                            <p class="text-sm text-gray-600 mt-1">Get reminders 1 day before your scheduled bookings</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Get reminders 1 day before your scheduled bookings</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" 
                                    name="booking_reminders" 
                                    value="1" 
-                                   class="sr-only toggle-checkbox" 
+                                   class="sr-only notification-toggle" 
                                    {{ isset($settings['booking_reminders']) && $settings['booking_reminders'] ? 'checked' : '' }}>
-                            <div class="toggle-bg w-14 h-7 bg-gray-300 rounded-full shadow-md transition-all duration-300 group-hover:shadow-lg">
-                                <div class="toggle-circle absolute top-0.5 left-0.5 bg-white w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform duration-300">
-                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="notification-toggle-bg w-16 h-8 bg-gray-300 dark:bg-gray-600 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl border-2 border-gray-400 dark:border-gray-500">
+                                <div class="notification-toggle-circle absolute top-0.5 left-0.5 bg-white w-7 h-7 rounded-full shadow-md flex items-center justify-center transition-transform duration-300 border-2 border-gray-300 dark:border-gray-400">
+                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
@@ -201,7 +200,7 @@
 
             <!-- Action Buttons -->
             <div class="flex justify-between">
-                <a href="{{ route('dashboard') }}" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition duration-200 font-medium">
+                <a href="{{ route('dashboard') }}" class="bg-gray-600 dark:bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-200 font-medium">
                     Cancel
                 </a>
                 <button type="submit" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition duration-200 font-medium shadow-lg">
@@ -216,10 +215,12 @@
 /* Toggle switch when checked */
 .toggle-checkbox:checked ~ .toggle-bg {
     background: linear-gradient(to right, #4f46e5, #7c3aed);
+    border-color: #6366f1;
 }
 
 .toggle-checkbox:checked ~ .toggle-bg .toggle-circle {
     transform: translateX(2.5rem); /* 40px slide to the right */
+    border-color: #8b5cf6;
 }
 
 .toggle-checkbox:checked ~ .toggle-bg .stars-container {
@@ -239,6 +240,7 @@
 .toggle-checkbox:focus ~ .toggle-bg {
     ring: 4px;
     ring-color: rgba(139, 92, 246, 0.3);
+    border-color: #8b5cf6;
 }
 
 /* Moon icon initial state */
@@ -257,47 +259,80 @@
 
 /* Glowing effect on hover */
 .group:hover .toggle-bg {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    border-color: #a78bfa;
 }
 
-/* Pulse animation for notification dot */
-@keyframes ping {
-    75%, 100% {
-        transform: scale(2);
-        opacity: 0;
-    }
+/* Dark mode specific for main toggle */
+.dark .toggle-checkbox:checked ~ .toggle-bg {
+    background: linear-gradient(to right, #6366f1, #8b5cf6);
+    border-color: #a78bfa;
 }
 
-/* Toggle switches for notifications */
-.toggle-checkbox:checked ~ .toggle-bg {
+.dark .toggle-bg {
+    border-color: #6b7280;
+}
+
+.dark .toggle-circle {
+    border-color: #6b7280;
+}
+
+.dark .toggle-checkbox:checked ~ .toggle-bg .toggle-circle {
+    border-color: #a78bfa;
+}
+
+/* Notification toggle switches - Enhanced visibility */
+.notification-toggle:checked ~ .notification-toggle-bg {
     background: linear-gradient(to right, #3b82f6, #06b6d4);
+    border-color: #2563eb;
 }
 
-.toggle-checkbox:checked ~ .toggle-bg .toggle-circle {
-    transform: translateX(1.75rem);
+.notification-toggle:checked ~ .notification-toggle-bg .notification-toggle-circle {
+    transform: translateX(2rem);
     background: white;
+    border-color: #3b82f6;
 }
 
-.toggle-checkbox:checked ~ .toggle-bg svg {
+.notification-toggle:checked ~ .notification-toggle-bg svg {
     color: #3b82f6;
 }
 
-.toggle-checkbox:focus ~ .toggle-bg {
+.notification-toggle:focus ~ .notification-toggle-bg {
     ring: 4px;
     ring-color: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
 }
 
-/* Smooth transitions for toggle */
-.toggle-bg {
+/* Notification toggle background */
+.notification-toggle-bg {
     position: relative;
 }
 
-.toggle-circle {
-    transition: transform 0.3s ease, background-color 0.3s ease;
+.notification-toggle-circle {
+    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.group:hover .toggle-bg {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+.group:hover .notification-toggle-bg {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    border-color: #60a5fa;
+}
+
+/* Dark mode specific for notification toggles */
+.dark .notification-toggle:checked ~ .notification-toggle-bg {
+    background: linear-gradient(to right, #2563eb, #0891b2);
+    border-color: #3b82f6;
+}
+
+.dark .notification-toggle-bg {
+    border-color: #6b7280;
+}
+
+.dark .notification-toggle-circle {
+    border-color: #6b7280;
+}
+
+.dark .notification-toggle:checked ~ .notification-toggle-bg .notification-toggle-circle {
+    border-color: #60a5fa;
 }
 </style>
 
@@ -309,7 +344,8 @@ function toggleDarkMode(checkbox) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('darkMode', 'enabled');
         
-        // Rotate icon
+        // Change to moon icon
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
         icon.style.transform = 'rotate(360deg) scale(1.1)';
         setTimeout(() => {
             icon.style.transform = 'rotate(360deg) scale(1)';
@@ -321,7 +357,8 @@ function toggleDarkMode(checkbox) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('darkMode', 'disabled');
         
-        // Rotate icon back
+        // Change to sun icon
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
         icon.style.transform = 'rotate(0deg) scale(1.1)';
         setTimeout(() => {
             icon.style.transform = 'rotate(0deg) scale(1)';
@@ -385,7 +422,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
             if (icon) {
+                // Set moon icon for dark mode
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
                 icon.style.transform = 'rotate(360deg)';
+            }
+        } else {
+            // Set sun icon for light mode
+            if (icon) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+                icon.style.transform = 'rotate(0deg)';
             }
         }
     }
