@@ -28,7 +28,6 @@ class SettingsController extends Controller
             'email_notifications' => $request->boolean('email_notifications'),
             'booking_reminders' => $request->boolean('booking_reminders'),
             'language' => $request->input('language', 'en'),
-            'timezone' => $request->input('timezone', 'UTC'),
             'date_format' => $request->input('date_format', 'Y-m-d'),
             'time_format' => $request->input('time_format', '24h'),
         ];
@@ -48,7 +47,6 @@ class SettingsController extends Controller
             'email_notifications' => true,
             'booking_reminders' => true,
             'language' => 'en',
-            'timezone' => 'UTC',
             'date_format' => 'Y-m-d',
             'time_format' => '24h',
         ];

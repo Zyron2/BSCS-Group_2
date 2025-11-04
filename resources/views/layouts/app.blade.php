@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Room Booking System</title>
+    <title>Campus Coord - Room Booking System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Add other CSS or meta tags as needed -->
     
@@ -122,104 +122,6 @@
         .avatar-border:hover::before {
             opacity: 1;
         }
-        
-        /* Modern profile icon styles */
-        .profile-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .profile-icon::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.6s;
-            opacity: 0;
-        }
-        
-        .profile-icon:hover::before {
-            opacity: 1;
-            transform: rotate(45deg) translate(30%, 30%);
-        }
-        
-        /* Enhanced dropdown styles */
-        .profile-dropdown {
-            transform: translateY(-10px) scale(0.95);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .profile-dropdown.show {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* Dropdown menu item hover effects */
-        .dropdown-item {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .dropdown-item::before {
-            content: '';
-            position: absolute;
-            left: -100%;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .dropdown-item:hover::before {
-            left: 100%;
-        }
-        
-        /* Profile status indicator */
-        .status-indicator {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            background: #10b981;
-            border: 2px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-        }
-        
-        .status-indicator.pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
-            }
-        }
-            right: -2px;
-            bottom: -2px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #6366f1);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .avatar-border:hover::before {
-            opacity: 1;
-        }
 
         /* Dark mode styles */
         .dark body {
@@ -298,8 +200,8 @@
                             </svg>
                         </div>
                         <h1 class="text-2xl font-bold text-white">
-                            <span class="hidden sm:inline">Room Booking</span>
-                            <span class="sm:hidden">RBS</span>
+                            <span class="hidden sm:inline">Campus Coord</span>
+                            <span class="sm:hidden">CC</span>
                         </h1>
                     </div>
                 </div>

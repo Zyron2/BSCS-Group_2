@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\Booking;
 use App\Models\Notification;
+use App\Mail\BookingNotification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -148,45 +150,76 @@ class AdminController extends Controller
 
     public function updateBookingStatus(Request $request, Booking $booking)
     {
-        $request->validate([
-            'status' => 'required|in:pending,confirmed,rejected'
-        ]);
-
+        $request->validate(['status' => 'required|in:pending,confirmed,rejected']);
+        
         $oldStatus = $booking->status;
         $booking->update(['status' => $request->status]);
 
-        // Notify the user about status change
-        $statusMessages = [
-            'confirmed' => "Your booking '{$booking->title}' for {$booking->room->name} on {$booking->date} has been confirmed.",
-            'rejected' => "Your booking '{$booking->title}' for {$booking->room->name} on {$booking->date} has been rejected.",
-            'pending' => "Your booking '{$booking->title}' for {$booking->room->name} on {$booking->date} is now pending review.",
-        ];
+        // Create notification for user
+        $message = match($request->status) {
+            'confirmed' => "Your booking for {$booking->room->name} on {$booking->date} has been confirmed.",
+            'rejected' => "Your booking for {$booking->room->name} on {$booking->date} has been rejected.",
+            'pending' => "Your booking for {$booking->room->name} on {$booking->date} status changed to pending.",
+        };
 
-        if ($oldStatus !== $request->status) {
-            Notification::create([
-                'user_id' => $booking->user_id,
-                'type' => 'booking',
-                'title' => 'Booking Status Updated',
-                'message' => $statusMessages[$request->status],
-            ]);
+        \App\Models\Notification::create([
+            'user_id' => $booking->user_id,
+            'type' => 'booking',
+            'title' => 'Booking Status Updated',
+            'message' => $message,
+        ]);
+
+        // Send email notification if user has email notifications enabled
+        $user = $booking->user;
+        $settings = $user->settings ?? [];
+        
+        if (isset($settings['email_notifications']) && $settings['email_notifications'] && $oldStatus !== $request->status) {
+            try {
+                Mail::to($user->email)->send(new BookingNotification($booking, $request->status));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send status update email: ' . $e->getMessage());
+            }
         }
 
-        return redirect()->route('admin.bookings')->with('success', 'Booking status updated successfully!');
+        return back()->with('success', 'Booking status updated successfully.');
     }
 
     // Add method to delete bookings from admin panel
     public function deleteBooking(Booking $booking)
     {
-        // Notify the user about booking deletion
-        Notification::create([
-            'user_id' => $booking->user_id,
-            'type' => 'booking',
-            'title' => 'Booking Cancelled by Admin',
-            'message' => "Your booking '{$booking->title}' for {$booking->room->name} on {$booking->date} has been cancelled by an administrator.",
-        ]);
+        $roomName = $booking->room->name;
+        $bookingTitle = $booking->title;
+        $bookingDate = $booking->date;
+        $userId = $booking->user_id;
 
+        // Only send notification if booking has a user
+        if ($userId) {
+            // Create notification for the user
+            \App\Models\Notification::create([
+                'user_id' => $userId,
+                'type' => 'booking',
+                'title' => 'Booking Cancelled by Admin',
+                'message' => "Your booking '{$bookingTitle}' for {$roomName} on {$bookingDate} has been cancelled by an administrator.",
+            ]);
+
+            // Send email notification if user has email notifications enabled
+            $user = $booking->user;
+            if ($user) {
+                $settings = $user->settings ?? [];
+                
+                if (isset($settings['email_notifications']) && $settings['email_notifications']) {
+                    try {
+                        Mail::to($user->email)->send(new BookingNotification($booking, 'cancelled'));
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send deletion email: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+
+        // Delete the booking
         $booking->delete();
 
-        return redirect()->route('admin.bookings')->with('success', 'Booking deleted successfully. User has been notified.');
+        return redirect()->back()->with('success', 'Booking deleted successfully.');
     }
 }

@@ -143,7 +143,7 @@
                 </div>
                 <div class="p-6 space-y-6">
                     <!-- Email Notifications -->
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                         <div class="flex-1">
                             <label class="text-sm font-medium text-gray-900 flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,49 +151,50 @@
                                 </svg>
                                 Email Notifications
                             </label>
-                            <p class="text-sm text-gray-500 mt-1">Receive email updates about your bookings</p>
+                            <p class="text-sm text-gray-600 mt-1">Receive email updates about your bookings</p>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="email_notifications" value="1" class="sr-only peer" {{ isset($settings['email_notifications']) && $settings['email_notifications'] ? 'checked' : '' }}>
-                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input type="checkbox" 
+                                   name="email_notifications" 
+                                   value="1" 
+                                   class="sr-only toggle-checkbox" 
+                                   {{ isset($settings['email_notifications']) && $settings['email_notifications'] ? 'checked' : '' }}>
+                            <div class="toggle-bg w-14 h-7 bg-gray-300 rounded-full shadow-md transition-all duration-300 group-hover:shadow-lg">
+                                <div class="toggle-circle absolute top-0.5 left-0.5 bg-white w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform duration-300">
+                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </label>
                     </div>
 
                     <!-- Booking Reminders -->
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                         <div class="flex-1">
                             <label class="text-sm font-medium text-gray-900 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Booking Reminders
                             </label>
-                            <p class="text-sm text-gray-500 mt-1">Get reminders before your scheduled bookings</p>
+                            <p class="text-sm text-gray-600 mt-1">Get reminders 1 day before your scheduled bookings</p>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="booking_reminders" value="1" class="sr-only peer" {{ isset($settings['booking_reminders']) && $settings['booking_reminders'] ? 'checked' : '' }}>
-                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input type="checkbox" 
+                                   name="booking_reminders" 
+                                   value="1" 
+                                   class="sr-only toggle-checkbox" 
+                                   {{ isset($settings['booking_reminders']) && $settings['booking_reminders'] ? 'checked' : '' }}>
+                            <div class="toggle-bg w-14 h-7 bg-gray-300 rounded-full shadow-md transition-all duration-300 group-hover:shadow-lg">
+                                <div class="toggle-circle absolute top-0.5 left-0.5 bg-white w-6 h-6 rounded-full shadow-sm flex items-center justify-center transition-transform duration-300">
+                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </label>
-                    </div>
-
-                    <!-- Timezone -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-2 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Timezone
-                        </label>
-                        <select name="timezone" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="UTC" {{ isset($settings['timezone']) && $settings['timezone'] == 'UTC' ? 'selected' : '' }}>UTC (GMT+0)</option>
-                            <option value="America/New_York" {{ isset($settings['timezone']) && $settings['timezone'] == 'America/New_York' ? 'selected' : '' }}>Eastern Time (GMT-5)</option>
-                            <option value="America/Chicago" {{ isset($settings['timezone']) && $settings['timezone'] == 'America/Chicago' ? 'selected' : '' }}>Central Time (GMT-6)</option>
-                            <option value="America/Denver" {{ isset($settings['timezone']) && $settings['timezone'] == 'America/Denver' ? 'selected' : '' }}>Mountain Time (GMT-7)</option>
-                            <option value="America/Los_Angeles" {{ isset($settings['timezone']) && $settings['timezone'] == 'America/Los_Angeles' ? 'selected' : '' }}>Pacific Time (GMT-8)</option>
-                            <option value="Europe/London" {{ isset($settings['timezone']) && $settings['timezone'] == 'Europe/London' ? 'selected' : '' }}>London (GMT+0)</option>
-                            <option value="Europe/Paris" {{ isset($settings['timezone']) && $settings['timezone'] == 'Europe/Paris' ? 'selected' : '' }}>Paris (GMT+1)</option>
-                            <option value="Asia/Tokyo" {{ isset($settings['timezone']) && $settings['timezone'] == 'Asia/Tokyo' ? 'selected' : '' }}>Tokyo (GMT+9)</option>
-                        </select>
                     </div>
                 </div>
             </div>
@@ -265,6 +266,38 @@
         transform: scale(2);
         opacity: 0;
     }
+}
+
+/* Toggle switches for notifications */
+.toggle-checkbox:checked ~ .toggle-bg {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+}
+
+.toggle-checkbox:checked ~ .toggle-bg .toggle-circle {
+    transform: translateX(1.75rem);
+    background: white;
+}
+
+.toggle-checkbox:checked ~ .toggle-bg svg {
+    color: #3b82f6;
+}
+
+.toggle-checkbox:focus ~ .toggle-bg {
+    ring: 4px;
+    ring-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Smooth transitions for toggle */
+.toggle-bg {
+    position: relative;
+}
+
+.toggle-circle {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.group:hover .toggle-bg {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 </style>
 

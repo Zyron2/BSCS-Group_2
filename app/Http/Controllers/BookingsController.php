@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use App\Mail\BookingNotification;
+use Illuminate\Support\Facades\Mail;
 
 class BookingsController extends Controller
 {
@@ -61,7 +63,12 @@ class BookingsController extends Controller
             'attendees' => 'required|integer'
         ]);
 
-        // Create notification for new booking
+        $booking = Booking::create(array_merge($request->all(), [
+            'user_id' => auth()->id(),
+            'status' => 'pending'
+        ]));
+
+        // Create in-app notification
         \App\Models\Notification::create([
             'user_id' => auth()->id(),
             'type' => 'booking',
@@ -69,10 +76,17 @@ class BookingsController extends Controller
             'message' => 'Your booking request for ' . Room::find($request->room_id)->name . ' has been submitted.',
         ]);
 
-        Booking::create(array_merge($request->all(), [
-            'user_id' => auth()->id(),
-            'status' => 'pending'
-        ]));
+        // Send email notification if enabled
+        $user = auth()->user();
+        $settings = $user->settings ?? [];
+        
+        if (isset($settings['email_notifications']) && $settings['email_notifications']) {
+            try {
+                Mail::to($user->email)->send(new BookingNotification($booking, 'created'));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send booking email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('bookings.index')->with('success', 'Booking created successfully!');
     }
@@ -115,11 +129,11 @@ class BookingsController extends Controller
             return redirect()->route('bookings.index')->with('error', 'Cannot cancel past bookings.');
         }
 
-        // Store room name before deletion
+        $user = auth()->user();
         $roomName = $booking->room->name;
         $bookingDate = $booking->date;
 
-        // Create a notification for the cancellation
+        // Create in-app notification
         \App\Models\Notification::create([
             'user_id' => auth()->id(),
             'type' => 'booking',
@@ -127,7 +141,17 @@ class BookingsController extends Controller
             'message' => 'Your booking for ' . $roomName . ' on ' . $bookingDate . ' has been cancelled.',
         ]);
 
-        // Delete the booking
+        // Send email notification if enabled
+        $settings = $user->settings ?? [];
+        
+        if (isset($settings['email_notifications']) && $settings['email_notifications']) {
+            try {
+                Mail::to($user->email)->send(new BookingNotification($booking, 'cancelled'));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send cancellation email: ' . $e->getMessage());
+            }
+        }
+
         $booking->delete();
 
         return redirect()->route('bookings.index')->with('success', 'Booking cancelled successfully.');
