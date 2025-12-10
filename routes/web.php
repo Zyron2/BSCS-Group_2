@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController; 
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Auth;
 
 // Redirect root to register for new users, or dashboard if authenticated
@@ -64,6 +65,12 @@ Route::middleware(['auth'])->group(function () {
     // Support routes
     Route::get('/support', [App\Http\Controllers\SupportController::class, 'show'])->name('support.show');
     Route::post('/support', [App\Http\Controllers\SupportController::class, 'submit'])->name('support.submit');
+    
+    // AI Chat Assistant routes
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/models', [ChatController::class, 'getModels'])->name('chat.models');
+    Route::post('/chat/stream', [ChatController::class, 'streamMessage'])->name('chat.stream');
 });
 
 // Admin dashboard routes (for admin users only)
